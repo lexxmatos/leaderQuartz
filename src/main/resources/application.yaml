@@ -1,0 +1,41 @@
+server:
+  port: ${PORT:8989}  # If PORT is not set, it defaults to 8989.
+spring:
+  application:
+    name: leaderQuartz
+  datasource:
+    url: jdbc:postgresql://localhost:5432/quartzDb
+    username: lex
+    password: lex
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  # Quartz properties
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always  # Use 'always' for initial setup, then 'never'
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceId: AUTO  # AUTO or a specific unique value per instance
+            instanceName: lexClustered
+          dataSource:
+            quartzDS:
+              provider: spring
+              driver: org.postgresql.Driver
+              URL: jdbc:postgresql://localhost:5432/quartzDb
+              user: lex
+              password: lex
+              maxConnections: 5
+              validationQuery: select 1
+          jobStore:
+            misfireThreshold : 20000
+            dataSource: quartzDS
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            useProperties: false
+            tablePrefix: QRTZ_
+            isClustered: true

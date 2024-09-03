@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leaderquartz
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: leaderquartz
+  template:
+    metadata:
+      labels:
+        app: leaderquartz
+    spec:
+      containers:
+        - name: leaderquartz-container
+          image: leaderquartz:latest
+          ports:
+            - containerPort: 80
+          env:
+          - name: SPRING_DATASOURCE_URL
+            value: "jdbc:postgresql://postgres:5432/quartzDb"
+          - name: SPRING_DATASOURCE_USERNAME
+            value: "lex"
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: "lex"
+          - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_URL
+            value: "jdbc:postgresql://postgres:5432/quartzDb"
+          - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_USER
+            value: "lex"
+          - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_PASSWORD
+            value: "lex"
+status: {}
