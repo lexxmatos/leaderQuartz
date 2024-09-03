@@ -15,25 +15,25 @@ services:
     networks:
       - lex-network
 
-  leaderQuartz:
-    # container_name: leaderQuartz-container
-    image: 'leaderquartz:latest'
-    ports:
-    #  - '8989:80'
-      - '80'
-    restart: always
-    environment:
-      - PORT=80
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/quartzDb
-      - SPRING_DATASOURCE_USERNAME=lex
-      - SPRING_DATASOURCE_PASSWORD=lex
-      - SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_URL=jdbc:postgresql://postgres:5432/quartzDb
-      - SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_USER=lex
-      - SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_PASSWORD=lex
-    depends_on:
-      - postgres
-    networks:
-      - lex-network
+#  leaderQuartz:
+#    # container_name: leaderQuartz-container
+#    image: 'leaderquartz:latest'
+#    ports:
+#    #  - '8989:80'
+#      - '80'
+#    restart: always
+#    environment:
+#      - PORT=80
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/quartzDb
+#      - SPRING_DATASOURCE_USERNAME=lex
+#      - SPRING_DATASOURCE_PASSWORD=lex
+#      - SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_URL=jdbc:postgresql://postgres:5432/quartzDb
+#      - SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_USER=lex
+#      - SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_PASSWORD=lex
+#    depends_on:
+#      - postgres
+#    networks:
+#      - lex-network
 networks:
   lex-network:
     driver: bridge

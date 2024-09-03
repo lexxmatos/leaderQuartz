@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: leaderquartz
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: leaderquartz
@@ -15,17 +15,18 @@ spec:
       containers:
         - name: leaderquartz-container
           image: leaderquartz:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
           env:
           - name: SPRING_DATASOURCE_URL
-            value: "jdbc:postgresql://postgres:5432/quartzDb"
+            value: "jdbc:postgresql://localhost:5432/quartzDb"
           - name: SPRING_DATASOURCE_USERNAME
             value: "lex"
           - name: SPRING_DATASOURCE_PASSWORD
             value: "lex"
           - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_URL
-            value: "jdbc:postgresql://postgres:5432/quartzDb"
+            value: "jdbc:postgresql://localhost:5432/quartzDb"
           - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_USER
             value: "lex"
           - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_PASSWORD
