@@ -1,6 +1,80 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16.4-alpine3.20
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "quartzDb"     # The name of the database
+            - name: POSTGRES_USER
+              value: "lex"          # Database user
+            - name: POSTGRES_PASSWORD
+              value: "lex"          # Database password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+              subPath: postgres-data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432 # The port PostgreSQL listens on
+      targetPort: 5432
+  type: ClusterIP # The default type, making it available only within the cluster
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: postgres-local-pv  # Referencing the PersistentVolume
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-local-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /home/alexandre/Documents/projetos-pessoais/leaderQuartz/database
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: leaderquartz
 spec:
   replicas: 1
@@ -20,13 +94,13 @@ spec:
             - containerPort: 80
           env:
           - name: SPRING_DATASOURCE_URL
-            value: "jdbc:postgresql://localhost:5432/quartzDb"
+            value: "jdbc:postgresql://postgres-service:5432/quartzDb"
           - name: SPRING_DATASOURCE_USERNAME
             value: "lex"
           - name: SPRING_DATASOURCE_PASSWORD
             value: "lex"
           - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_URL
-            value: "jdbc:postgresql://localhost:5432/quartzDb"
+            value: "jdbc:postgresql://postgres-service:5432/quartzDb"
           - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_USER
             value: "lex"
           - name: SPRING_QUARTZ_PROPERTIES_ORG_QUARTZ_DATASOURCE_QUARTZDS_PASSWORD
